@@ -27,6 +27,22 @@ da2 = DimArray(a2, dimz2; refdims=refdimz, name=:test2)
     checkbounds(da, X(2), Y(1))
     @test_throws BoundsError checkbounds(da, X(10), Y(20))
     @test_throws BoundsError checkbounds(da, X(1:10), Y(2:20))
+
+    # kwargs
+    @test @inferred checkbounds(Bool, da2; row=1, column=1) == true
+    @test @inferred checkbounds(Bool, da2; row=10, column=1) == false
+    @test @inferred checkbounds(Bool, da2; row=10) == false
+    checkbounds(da2; row=1, column=1)
+    @test_throws BoundsError checkbounds(da2; row=10, column=20)
+    @test_throws BoundsError checkbounds(da2; row=1:10, column=1:20)
+    @test_throws BoundsError checkbounds(da2; row=10)
+
+    # zero arguments
+    single_elem = DimArray([42], (X,))
+    @test @inferred checkbounds(Bool, single_elem) == true
+    @test @inferred checkbounds(Bool, da) == false
+    checkbounds(single_elem)
+    @test_throws BoundsError checkbounds(da)
 end
 
 @testset "checkdims" begin

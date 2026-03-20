@@ -38,6 +38,14 @@ Base.checkbounds(::Type{Bool}, A::AbstractBasicDimArray, d1::IDim, dims::IDim...
     Base.checkbounds(Bool, A, dims2indices(A, (d1, dims...))...)
 Base.checkbounds(A::AbstractBasicDimArray, d1::IDim, dims::IDim...) =
     Base.checkbounds(A, dims2indices(A, (d1, dims...))...)
+function Base.checkbounds(::Type{Bool}, A::AbstractBasicDimArray; kw...)
+    isempty(kw) && return Base.checkbounds(Bool, parent(A))
+    Base.checkbounds(Bool, A, _simplify_dim_indices(kw2dims(values(kw))...,)...)
+end
+function Base.checkbounds(A::AbstractBasicDimArray; kw...)
+    isempty(kw) && return Base.checkbounds(parent(A))
+    Base.checkbounds(A, _simplify_dim_indices(kw2dims(values(kw))...,)...)
+end
 
 """
     AbstractDimArray <: AbstractBasicArray
