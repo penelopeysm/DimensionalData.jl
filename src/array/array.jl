@@ -43,8 +43,11 @@ function Base.checkbounds(::Type{Bool}, A::AbstractBasicDimArray; kw...)
     Base.checkbounds(Bool, A, _simplify_dim_indices(kw2dims(values(kw))...,)...)
 end
 function Base.checkbounds(A::AbstractBasicDimArray; kw...)
-    isempty(kw) && return all(x -> x == 1, size(A))
-    Base.checkbounds(A, _simplify_dim_indices(kw2dims(values(kw))...,)...)
+    if isempty(kw)
+        all(x -> x == 1, size(A)) || throw(BoundsError(A, ()))
+    else
+        Base.checkbounds(A, _simplify_dim_indices(kw2dims(values(kw))...,)...)
+    end
 end
 
 """
